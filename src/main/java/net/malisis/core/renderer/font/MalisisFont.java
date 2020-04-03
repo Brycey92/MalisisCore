@@ -305,6 +305,8 @@ public class MalisisFont
 				drawChar(cd, x + 2 * fs, y + fs, options, options.getShadowColor());
 			if (options.isUnderline())
 				drawLine(cd, x + fs, y + 2 * fs, options, options.getShadowColor());
+			if (options.isStrikethrough())
+				drawLine(cd, x + fs, y + 2 - (getStringHeight(options) / 2) * fs, options, options.getShadowColor());
 		}
 
 		drawChar(cd, x, y, options, options.getColor());
@@ -312,6 +314,8 @@ public class MalisisFont
 			drawChar(cd, x + fs, y, options, options.getColor());
 		if (options.isUnderline())
 			drawLine(cd, x, y + fs, options, options.getColor());
+		if (options.isStrikethrough())
+			drawLine(cd, x, y - (getStringHeight(options) / 2) + fs, options, options.getColor());
 	}
 
 	protected void drawChar(CharData cd, float offsetX, float offsetY, FontOptions options, int color)
@@ -348,6 +352,9 @@ public class MalisisFont
 
 	protected void drawLine(CharData cd, float offsetX, float offsetY, FontOptions options, int color)
 	{
+		if (cd.getChar() == '\r' || cd.getChar() == '\n')
+			return;
+
 		BufferBuilder buffer = Tessellator.getInstance().getBuffer();
 		float factor = options.getFontScale() / fontGeneratorOptions.fontSize * 9;
 		float w = cd.getFullWidth(fontGeneratorOptions) * factor + options.getFontScale();

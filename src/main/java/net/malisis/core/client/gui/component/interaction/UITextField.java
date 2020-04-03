@@ -682,7 +682,7 @@ public class UITextField extends UIComponent<UITextField> implements IScrollable
 		if (selectingText)
 			deleteSelectedText();
 
-		final StringBuilder oldText = this.text;
+		final StringBuilder oldText = new StringBuilder(this.text.toString());
 		final String oldValue = this.text.toString();
 		String newValue = oldText.insert(this.cursorPosition.textPosition, str).toString();
 
@@ -1420,17 +1420,19 @@ public class UITextField extends UIComponent<UITextField> implements IScrollable
 		 *
 		 * @param backwards if true, jump to the previous line, jump to the next otherwise
 		 */
-		public void jumpLine(boolean backwards)
-		{
+		public void jumpLine(boolean backwards) {
 			if ((backwards && line == 0) || (!backwards && line == lines.size() - 1))
 				return;
 
-			if (backwards)
+			if (backwards) {
 				line = Math.max(0, line - 1);
-			else
+			}	else {
 				line = Math.min(line + 1, lines.size() - 1);
-			//character = Math.min(character, currentLineText().length());
-			character = Math.round(font.getCharPosition(currentLineText(), fontOptions, lastOffset, charOffset));
+			}
+
+			final String currentLine = currentLineText();
+			final String trimmedLine = currentLine.endsWith("\n") ? currentLine.substring(0, currentLine.length() - 1) : currentLine;
+			character = Math.round(font.getCharPosition(trimmedLine, fontOptions, lastOffset, charOffset));
 			updateTextPosition();
 		}
 
@@ -1495,7 +1497,10 @@ public class UITextField extends UIComponent<UITextField> implements IScrollable
 		 */
 		private int characterFromX(int x)
 		{
-			return (int) font.getCharPosition(currentLineText(), fontOptions, x, charOffset);
+			final String currentLine = currentLineText();
+			final String currentLineTrimmed = currentLine.endsWith("\n") ? currentLine.substring(0, currentLine.length() - 1) : currentLine;
+
+			return (int) font.getCharPosition(currentLineTrimmed, fontOptions, x, charOffset);
 		}
 
 		/**
